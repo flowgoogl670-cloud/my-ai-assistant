@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EHSON AI</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080808;color:#fff;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:22px 15px;text-align:center;
+ border-bottom:1px solid #b8860b;
+ background:#111;
+}
+.logo{
+ color:#ffd700;font-size:32px;
+ font-weight:bold;letter-spacing:2px;
+ text-shadow:0 0 15px #d49b00;
+}
+.sub{color:#d6b65b;margin-top:7px}
+main{max-width:750px;margin:auto;padding:18px}
+.welcome{
+ border:1px solid #d6a900;
+ border-radius:18px;padding:20px;
+ text-align:center;background:#15120a;
+ box-shadow:0 0 15px #7b5a00;
+ margin-bottom:22px;
+}
+.welcome h2{color:#ffd700}
+.grid{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+.card{
+ background:#151515;border:1px solid #b8860b;
+ border-radius:15px;padding:20px 8px;
+ text-align:center;cursor:pointer;
+}
+.card:active{background:#302408}
+.card .ico{font-size:30px;color:#ffd700}
+.card h3{color:#f5cf55;font-size:16px}
+#chat{margin-top:22px;padding-bottom:100px}
+.msg{
+ padding:13px;margin:12px 0;
+ border-radius:14px;line-height:1.5;
+ white-space:pre-wrap;
+}
+.user{background:#49390e;margin-left:15%}
+.ai{background:#191919;border:1px solid #806000;margin-right:8%}
+footer{
+ position:fixed;bottom:0;left:0;width:100%;
+ padding:12px;background:#101010;
+ display:flex;gap:8px;border-top:1px solid #a77b00;
+}
+input{
+ flex:1;min-width:0;padding:14px;
+ border-radius:12px;border:1px solid #b8860b;
+ background:#222;color:white;font-size:16px;
+}
+button{
+ background:#e7b900;color:#111;border:0;
+ border-radius:12px;padding:12px 17px;
+ font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">★ EHSON AI ★</div>
+<div class="sub">Зеҳни сунъии оянда</div>
+</header>
+
+<main>
+<div class="welcome">
+<h2>Салом! Ман EHSON AI ҳастам 👋</h2>
+<p>Чӣ кӯмак кунам?</p>
+</div>
+
+<div class="grid">
+<div class="card" onclick="suggest('Ба ман ҷавоб деҳ')">
+<div class="ico">💬</div>
+<h3>Чати AI</h3>
+Савол навис
+</div>
+<div class="card" onclick="suggest('Барои ман як сурат соз')">
+<div class="ico">🎨</div>
+<h3>Сохтани сурат</h3>
+Аз матн сурат соз
+</div>
+<div class="card" onclick="suggest('Ман мехоҳам бо овоз суҳбат кунам')">
+<div class="ico">🎙️</div>
+<h3>Овоз</h3>
+Сӯҳбати овозӣ
+</div>
+<div class="card" onclick="suggest('Дар интернет ин маълумотро ҷустуҷӯ кун')">
+<div class="ico">🌐</div>
+<h3>Интернет</h3>
+Ҷустуҷӯи маълумот
+</div>
+<div class="card" onclick="suggest('Ин файлро таҳлил кун')">
+<div class="ico">📄</div>
+<h3>Файлҳо</h3>
+Таҳлили ҳуҷҷат
+</div>
+<div class="card" onclick="suggest('Барои ман код навис')">
+<div class="ico">💻</div>
+<h3>Навиштани код</h3>
+Барнома соз
+</div>
+</div>
+
+<div id="chat">
+<div class="msg ai">Салом! Ман EHSON AI ҳастам. Саволатро навис.</div>
+</div>
+</main>
+
+<footer>
+<input id="message" placeholder="Саволатро навис..."
+onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">➤</button>
+</footer>
+
+<script>
+function suggest(t){
+ document.getElementById('message').value=t;
+ send();
+}
+async function send(){
+ const input=document.getElementById('message');
+ const chat=document.getElementById('chat');
+ const text=input.value.trim();
+ if(!text)return;
+ input.value='';
+
+ const u=document.createElement('div');
+ u.className='msg user';
+ u.textContent=text;
+ chat.appendChild(u);
+
+ const a=document.createElement('div');
+ a.className='msg ai';
+ a.textContent='Ҷавоб омода мешавад...';
+ chat.appendChild(a);
+
+ try{
+  const r=await fetch('/api/chat',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({message:text})
+  });
+  const data=await r.json();
+  if(!r.ok)throw new Error();
+  a.textContent=data.reply;
+ }catch(e){
+  a.textContent='Сервер ҳоло пайваст нест. Қадами пайваст кардани AI ҳанӯз иҷро нашудааст.';
+ }
+ chat.scrollTop=chat.scrollHeight;
+}
+</script>
+</body>
+</html>
